@@ -49,7 +49,19 @@ function setup() {
 function draw() {
 
     if(openSet.length > 0){
-
+        
+        var winner = 0;
+        // loop through openSet to find the node with the lowest f value
+        // this will be the node we explore next
+        // this is finding the f value at that i position and compairing it to the last i.f value and seeing which is the lowest cost
+        for (var i=0; i < openSet.length; i++){
+            if (openSet[i].f < openSet[winner].f) 
+                winner = i;   
+        }
+        
+        if (openSet[winner]= end){
+            console.log("DONE!")
+        }
 
     } else{
 
