@@ -58,12 +58,20 @@ function draw() {
             if (openSet[i].f < openSet[winner].f) 
                 winner = i;   
         }
-        
-        if (openSet[winner]= end){
+
+        var current = openSet[winner];
+
+        //if the last box checked is the end
+        //console log done
+        //remove it from the openSet array and add it to end of closedSet Array.
+        if (openSet[winner] === end){
             console.log("DONE!")
         }
 
-    } else{
+        openSet.remove()
+        closedSet.push(current);
+
+        } else{
 
     } 
   
