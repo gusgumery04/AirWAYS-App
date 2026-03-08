@@ -42,6 +42,8 @@ function setup() {
         }   
     }
 
+
+
     //definding the start and end of the grid
     start = grid[0][0];
     end = grid[cols-1][rows-1];
@@ -74,14 +76,14 @@ function draw() {
         //remove it from the openSet array and add it to end of closedSet Array.
         if (current === end){
         
-            //code for finding/highlighting the path 
-            path = [];
-            var temp = current;
-            path.push(temp);
-            while (temp.previous){
-                path.push(temp.previous);
-                temp = temp.previous;
-            }
+            // //code for finding/highlighting the path 
+            // path = [];
+            // var temp = current;
+            // path.push(temp);
+            // while (temp.previous){
+            //     path.push(temp.previous);
+            //     temp = temp.previous;
+            // }
 
             console.log("DONE!")
         }
@@ -135,6 +137,15 @@ function draw() {
     for (var i = 0; i < path.length; i++){
         path[i].show(color(0,0,255))
     }
+
+                //code for finding/highlighting the path 
+                path = [];
+                var temp = current;
+                path.push(temp);
+                while (temp.previous){
+                    path.push(temp.previous);
+                    temp = temp.previous;
+                }
 
 
 
