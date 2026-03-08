@@ -34,6 +34,12 @@ function setup() {
         }   
     }
 
+    for (var i = 0; i < cols; i++){
+        for (var j = 0; j < rows; j++){
+            grid[i][j].addNeighbours(grid);
+        }   
+    }
+
     //definding the start and end of the grid
     start = grid[0][0];
     end = grid[cols-1][rows-1];
@@ -68,7 +74,7 @@ function draw() {
             console.log("DONE!")
         }
 
-        openSet.remove()
+        removeFromArray(openSet, current);
         closedSet.push(current);
 
         } else{
@@ -97,12 +103,14 @@ function draw() {
 //adding a constructor function so we change stuff along the way
 function Spot(i,j){
 
-    this.x = i;
-    this.y = j;
+    this.i = i;
+    this.j = j;
 
     this.f = 0;
     this.g = 0;
     this.h = 0;
+
+    this.neighbours = [];
 
     //show function
 
@@ -112,9 +120,46 @@ function Spot(i,j){
         noStroke();
         strokeWeight(1);
 
-        rect((this.x *w), (this.y *h), w,h);
+        rect((this.i *w), (this.j *h), w,h);
 
     } //END spot function
+
+    this.addNeighbours = function(grid){
+        
+        var i = this.i;
+        var j = this.j;
+
+     if(i < cols-1){
+        this.neighbours.push(grid[i+1][j]);
+     }
+     if(i > 0){
+        this.neighbours.push(grid[i-1][j]);
+     }
+     if(j < rows-1){
+        this.neighbours.push(grid[i][j+1]);
+     }
+     if(j > 0){
+        this.neighbours.push(grid[i][j-1]);
+     }
+        
+    }
+
+
+}
+
+
+
+
+
+
+//Function to remove a closedSet node from openSet array.
+function removeFromArray(arr,elt){
+    for (var i = arr.length-1; i>=0; i--){
+        if (arr[i] === elt){
+            arr.splice(i,1);
+        }
+
+    }
 }
 
 
