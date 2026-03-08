@@ -1,8 +1,8 @@
 //TEST 01
 //A* Pathfinding test
 
-var cols = 5;
-var rows = 5;
+var cols = 50;
+var rows = 50;
 var grid = new Array(cols);
 
 var openSet = [];
@@ -77,6 +77,28 @@ function draw() {
         removeFromArray(openSet, current);
         closedSet.push(current);
 
+        var neighbours = current.neighbours;
+        for (var i = 0; i< neighbours.length; i++){
+            var neighbour = neighbours[i];
+
+            
+            if (!closedSet.includes(neighbour)){
+                var tempG = current.g + 1;
+
+                if (openSet.includes(neighbour)){
+                    if (tempG<neighbour.g){
+                       neighbour.g = tempG; 
+                    }
+                } else{
+                    neighbour.g = tempG;
+                    openSet.push(neighbour);
+                }
+                //heuristics
+                neighbour.h = heuristic(neighbour,end);
+                neighbour.f = neighbour.g + neighbour.h;
+            }
+        }
+
         } else{
 
     } 
@@ -117,8 +139,9 @@ function Spot(i,j){
     this.show = function (col){
 
         fill(col);
-        noStroke();
         strokeWeight(1);
+        // noStroke();
+    
 
         rect((this.i *w), (this.j *h), w,h);
 
@@ -161,5 +184,14 @@ function removeFromArray(arr,elt){
 
     }
 }
+
+function heuristic (a,b){
+    //this is known as euclidiian distance uses pythag theorem
+    var d = dist(a.i,a.j,b.i,b.j);
+    return d;
+
+}
+
+var cols
 
 
