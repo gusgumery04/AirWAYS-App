@@ -9,9 +9,11 @@ var openSet = [];
 var closedSet = [];
 var start;
 var end;
+var path = [];
 
 var w,h;
 var col; //colour
+
 
 
 function setup() {
@@ -70,7 +72,17 @@ function draw() {
         //if the last box checked is the end
         //console log done
         //remove it from the openSet array and add it to end of closedSet Array.
-        if (openSet[winner] === end){
+        if (current === end){
+        
+            //code for finding/highlighting the path 
+            path = [];
+            var temp = current;
+            path.push(temp);
+            while (temp.previous){
+                path.push(temp.previous);
+                temp = temp.previous;
+            }
+
             console.log("DONE!")
         }
 
@@ -96,6 +108,7 @@ function draw() {
                 //heuristics
                 neighbour.h = heuristic(neighbour,end);
                 neighbour.f = neighbour.g + neighbour.h;
+                neighbour.previous = current;
             }
         }
 
@@ -119,6 +132,11 @@ function draw() {
         openSet[i].show(color(0,255,0));
     }
 
+    for (var i = 0; i < path.length; i++){
+        path[i].show(color(0,0,255))
+    }
+
+
 
 }
 
@@ -133,6 +151,7 @@ function Spot(i,j){
     this.h = 0;
 
     this.neighbours = [];
+    this.previous = undefined;
 
     //show function
 
