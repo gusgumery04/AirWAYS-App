@@ -1,8 +1,8 @@
 //TEST 01
 //A* Pathfinding test
 
-var cols = 25;
-var rows = 25;
+var cols = 50;
+var rows = 50;
 var grid = new Array(cols);
 
 var openSet = [];
@@ -13,9 +13,13 @@ var path = [];
 var noSolution = false;
 
 var w,h;
-var col; //colour
+var col;
+var col1; //colour
+var mapImg;
 
-
+function preload(){
+    mapImg = loadImage("assets/map.png");
+}
 
 function setup() {
     createCanvas(400, 400);
@@ -61,104 +65,97 @@ function setup() {
 
 
 function draw() {
+    
+    var current;
 
-    if(openSet.length > 0){
-        
+    if (openSet.length > 0) {
+
         var winner = 0;
-        // loop through openSet to find the node with the lowest f value
-        // this will be the node we explore next
-        // this is finding the f value at that i position and compairing it to the last i.f value and seeing which is the lowest cost
-        for (var i=0; i < openSet.length; i++){
-            if (openSet[i].f < openSet[winner].f) 
-                winner = i;   
+        for (var i = 0; i < openSet.length; i++) {
+            if (openSet[i].f < openSet[winner].f) {
+                winner = i;
+            }
         }
 
-        var current = openSet[winner];
+        current = openSet[winner];
 
-        //if the last box checked is the end
-        //console log done
-        //remove it from the openSet array and add it to end of closedSet Array.
-        if (current === end){
-        
-            // //code for finding/highlighting the path 
-            // path = [];
-            // var temp = current;
-            // path.push(temp);
-            // while (temp.previous){
-            //     path.push(temp.previous);
-            //     temp = temp.previous;
-            // }
-
-            console.log("DONE!")
+        if (current === end) {
+            console.log("DONE!");
+            noLoop();
         }
 
         removeFromArray(openSet, current);
         closedSet.push(current);
 
         var neighbours = current.neighbours;
-        for (var i = 0; i< neighbours.length; i++){
+        for (var i = 0; i < neighbours.length; i++) {
             var neighbour = neighbours[i];
 
-            
-            if (!closedSet.includes(neighbour) && !neighbour.wall){
-                var tempG = current.g + 1;
+            if (!closedSet.includes(neighbour) && !neighbour.wall) {
+                var moveCost = 1;
 
-                if (openSet.includes(neighbour)){
-                    if (tempG<neighbour.g){
-                       neighbour.g = tempG; 
+                if (neighbour.park) {
+                     moveCost = 0.5;
+                }
+
+                var tempG = current.g + moveCost;
+                var newPath = false;
+
+                if (openSet.includes(neighbour)) {
+                    if (tempG < neighbour.g) {
+                        neighbour.g = tempG;
+                        newPath = true;
                     }
-                } else{
+                } else {
                     neighbour.g = tempG;
+                    newPath = true;
                     openSet.push(neighbour);
                 }
-                //heuristics
-                neighbour.h = heuristic(neighbour,end);
-                neighbour.f = neighbour.g + neighbour.h;
-                neighbour.previous = current;
+
+                if (newPath) {
+                    neighbour.h = heuristic(neighbour, end);
+                    neighbour.f = neighbour.g + neighbour.h;
+                    neighbour.previous = current;
+                }
             }
         }
 
-        } else{
-            console.log("no path!");
-            noSolution = true;
-            noLoop();
-
-    } 
-  
-    background(220);
-
-    for (var i = 0; i < cols; i++){
-        for (var j = 0; j < rows; j++){
-         grid[i][j].show(color(255));
-        }   
+    } else {
+        console.log("no path!");
+        noSolution = true;
+        noLoop();
+        return;
     }
 
-    for (var i = 0; i < closedSet.length; i++){
-        closedSet[i].show(color(255,0,0));
+    // background(220);
+
+    for (var i = 0; i < cols; i++) {
+        for (var j = 0; j < rows; j++) {
+            grid[i][j].show(color(255));
+        }
     }
 
-    for (var i = 0; i < openSet.length; i++){
-        openSet[i].show(color(0,255,0));
+    for (var i = 0; i < closedSet.length; i++) {
+        closedSet[i].show(color(255, 0, 0));
     }
 
-    for (var i = 0; i < path.length; i++){
-        path[i].show(color(0,0,255))
+    for (var i = 0; i < openSet.length; i++) {
+        openSet[i].show(color(0, 255, 0));
     }
 
-                //code for finding/highlighting the path 
-  
     path = [];
     var temp = current;
-    path.push(temp);
-    while (temp.previous){
-        path.push(temp.previous);
-        temp = temp.previous;
-
+    if (temp) {
+        path.push(temp);
+        while (temp.previous) {
+            path.push(temp.previous);
+            temp = temp.previous;
+        }
     }
 
-
-
-
+    for (var i = 0; i < path.length; i++) {
+        path[i].show(color(0, 0, 255));
+    }
 }
 
 //adding a constructor function so we change stuff along the way
@@ -174,25 +171,29 @@ function Spot(i,j){
     this.neighbours = [];
     this.previous = undefined;
     this.wall = false;
+    this.park = false;
 
     if(random(1)< 0.1){
         this.wall = true;
     }
+    if(random(1)> 0.1 && random(1)<=0.2){
+        this.park = true;
+    }
 
     //show function
 
-    this.show = function (col){
-
-        fill(col);
-        if (this.wall){
-            fill(0);
-        }
-        strokeWeight(1);
-        // noStroke();
+    this.show = function(col) {
+        let c = col;
     
-
-        rect((this.i *w), (this.j *h), w,h);
-
+        if (this.wall) {
+            c = color(0);
+        } else if (this.park) {
+            c = color(120, 200, 120);
+        }
+    
+        fill(c);
+        strokeWeight(1);
+        rect(this.i * w, this.j * h, w, h);
     } //END spot function
 
     this.addNeighbours = function(grid){
@@ -234,14 +235,17 @@ function removeFromArray(arr,elt){
 }
 
 function heuristic (a,b){
-    // //this is known as euclidiian distance uses pythag theorem
-    // var d = dist(a.i,a.j,b.i,b.j);
+    //this is known as euclidiian distance uses pythag theorem
+    var d = dist(a.i,a.j,b.i,b.j);
 
-    //absolute distance version
-    var d = abs(a.i - b.i) + abs(a.j-b.j);
+    // //absolute distance version
+    // var d = abs(a.i - b.i) + abs(a.j-b.j);
     
     return d;
 
 }
+
+//this code is cooked. 
+
 
 
