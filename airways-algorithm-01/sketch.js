@@ -96,7 +96,7 @@ function draw() {
             var neighbour = neighbours[i];
 
             
-            if (!closedSet.includes(neighbour)){
+            if (!closedSet.includes(neighbour) && !neighbour.wall){
                 var tempG = current.g + 1;
 
                 if (openSet.includes(neighbour)){
@@ -163,12 +163,20 @@ function Spot(i,j){
 
     this.neighbours = [];
     this.previous = undefined;
+    this.wall = false;
+
+    if(random(1)< 0.1){
+        this.wall = true;
+    }
 
     //show function
 
     this.show = function (col){
 
         fill(col);
+        if (this.wall){
+            fill(0);
+        }
         strokeWeight(1);
         // noStroke();
     
@@ -216,8 +224,12 @@ function removeFromArray(arr,elt){
 }
 
 function heuristic (a,b){
-    //this is known as euclidiian distance uses pythag theorem
-    var d = dist(a.i,a.j,b.i,b.j);
+    // //this is known as euclidiian distance uses pythag theorem
+    // var d = dist(a.i,a.j,b.i,b.j);
+
+    //absolute distance version
+    var d = abs(a.i - b.i) + abs(a.j-b.j);
+    
     return d;
 
 }
