@@ -1,8 +1,8 @@
 //TEST 01
 //A* Pathfinding test
 
-var cols = 50;
-var rows = 50;
+var cols = 25;
+var rows = 25;
 var grid = new Array(cols);
 
 var openSet = [];
@@ -10,6 +10,7 @@ var closedSet = [];
 var start;
 var end;
 var path = [];
+var noSolution = false;
 
 var w,h;
 var col; //colour
@@ -47,6 +48,9 @@ function setup() {
     //definding the start and end of the grid
     start = grid[0][0];
     end = grid[cols-1][rows-1];
+    //adding in that the start and end can never be a wall!
+    start.wall = false;
+    end.wall = false;
 
     //opening the set
     //start searching at 0,0 and then add numbers to the end of the array i'm assuming this logic works until the end of the array?
@@ -115,6 +119,9 @@ function draw() {
         }
 
         } else{
+            console.log("no path!");
+            noSolution = true;
+            noLoop();
 
     } 
   
@@ -139,13 +146,16 @@ function draw() {
     }
 
                 //code for finding/highlighting the path 
-                path = [];
-                var temp = current;
-                path.push(temp);
-                while (temp.previous){
-                    path.push(temp.previous);
-                    temp = temp.previous;
-                }
+  
+    path = [];
+    var temp = current;
+    path.push(temp);
+    while (temp.previous){
+        path.push(temp.previous);
+        temp = temp.previous;
+
+    }
+
 
 
 
@@ -233,7 +243,5 @@ function heuristic (a,b){
     return d;
 
 }
-
-var cols
 
 
