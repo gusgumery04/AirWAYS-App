@@ -1,4 +1,5 @@
-# testMap
+# testMap using A*
+
 
 ## Getting Started
 
